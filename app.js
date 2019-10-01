@@ -1,13 +1,18 @@
 const express = require("express");
 const app = express();
 
-// definiting routes, while listen is to listen for routes
-app.get("/", (req, res) => res.send("Apple pie!"));
+app.use(express.json());
 
-app.get("/books", (req, res) => res.send("Here are apples!"));
+const middleware = (req, res, next) => {
+	// console.log("Hello there");
+	next();
+};
+app.use(middleware);
 
-app.post("/books", (req, res) => res.send("Apple created"));
+const index = require("./routes/index");
+app.use("/", index);
 
-app.put("/books", (req, res) => res.send("Apple changed"));
+const books = require("./routes/books");
+app.use("/books", books);
 
 module.exports = app;
