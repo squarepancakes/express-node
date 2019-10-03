@@ -1,33 +1,40 @@
 const express = require("express");
 const router = express.Router();
-const book = require("../models/Books");
+const BookShelf = require("../models/BookShelf");
 
 router.post("/", (req, res) => res.send("Book created"));
 
-router.put("/", (req, res) => res.send("Book changed"));
-
 router.get("/", (req, res) => {
-	const { author, title } = req.query;
-
-	if (author) {
-		return res.send(book.filterBooks("author", author));
-	}
-	if (title) {
-		return res.send(book.filterBooks("title", title));
+	const queries = req.query;
+	if (queries.author || queries.title) {
+		return res.send(BookShelf.filterBooks(queries));
 	}
 
-	return res.send(book.getAllBooks());
+	return res.send(BookShelf.getAllBooks());
 });
 
 router.get("/:id", (req, res) => {
 	const id = Number(req.params.id);
-	const oneBook = book.getBookById(id);
+	const oneBook = BookShelf.getBookById(id);
 	res.send(oneBook);
 });
 router.post("/new", (req, res) => {
 	const newBook = req.body;
-	book.addNewBook(newBook);
+	BookShelf.addNewBook(newBook);
 	res.send(newBook);
 });
+
+router.put("/:id", (req, res) => {
+	const changes = req.body;
+	const id = Number(req.params.id);
+	BookShelf.updateBook(id, changes);
+	res.send(BookShelf.getBookById(id));
+});
+
+router.delete("/:id", (req, res) => {
+	const id = Number(req.params.id);
+	BookShelf.deleteBook(id);
+	res.send(BookShelf.getAllBooks());
+})
 
 module.exports = router;

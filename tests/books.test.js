@@ -1,16 +1,32 @@
 const request = require("supertest");
-const book = require("../models/Books");
+const BookShelf = require("../models/BookShelf");
 const app = require("../app");
+
+jest.mock("../models/BookShelf");
+
+const mockData = [
+	{ id: 1, title: "Intro to React", author: "Melvin" },
+	{ id: 2, title: "Baking and debugging", author: "Yun" },
+	{ id: 3, title: "Being an awesome dev", author: "Syafi" },
+	{ id: 4, title: "Weather forecast", author: "Carl" }
+];
 
 describe("/books", () => {
 	it("GET / should return new books", () => {
+		BookShelf.getAllBooks.mockReturnValueOnce(mockData);
 		return request(app)
 			.get("/books")
 			.expect(200)
-			.expect(book.getAllBooks());
+			.expect([
+				{ id: 1, title: "Intro to React", author: "Melvin" },
+				{ id: 2, title: "Baking and debugging", author: "Yun" },
+				{ id: 3, title: "Being an awesome dev", author: "Syafi" },
+				{ id: 4, title: "Weather forecast", author: "Carl" }
+			]);
 	});
 
 	it("GET / should return book 1", () => {
+		BookShelf.getBookById.mockReturnValueOnce(mockData[0]);
 		return request(app)
 			.get("/books/1")
 			.expect(200)
@@ -18,6 +34,7 @@ describe("/books", () => {
 	});
 
 	it("GET / should return book 2", () => {
+		BookShelf.getBookById.mockReturnValueOnce(mockData[1]);
 		return request(app)
 			.get("/books/2")
 			.expect(200)
@@ -31,47 +48,102 @@ describe("/books", () => {
 			.expect("Book created");
 	});
 
-    // kind of like mocking the data newBook takes in a "req.body"
-	it("POST /new should add a new book, 10", () => {
-        const newBook = { id: 10, title: "Waffle", author: "Blah" };
+	// kind of like mocking the data newBook takes in a "req.body"
+	it("POST / new should add a new book, 10", () => {
+		const newBook = { id: 10, title: "Waffle", author: "Blah" };
 		return request(app)
-            .post("/books/new")
-            .send(newBook)
+			.post("/books/new")
+			.send(newBook)
 			.expect(200)
-			.expect({ id: 10, title: "Waffle", author: "Blah" });
+			.expect({ id: 10, title: "Waffle", author: "Blah" })
+			.expect(() => expect(BookShelf.addNewBook).toBeCalledTimes(1));
 	});
 
-	it("POST /new should add a new book, 11", () => {
+	it("POST / new should add a new book, 11", () => {
 		const newBook = { id: 11, title: "Pancakes", author: "Blah" };
 		return request(app)
 			.post("/books/new")
 			.send(newBook)
 			.expect(200)
 			.expect({ id: 11, title: "Pancakes", author: "Blah" });
+		// .expect(() => expect(BookShelf.addNewBook).toBeCalledTimes(1));
 	});
 
-	it("PUT / should return book changed", () => {
-		return request(app)
-			.put("/books")
-			.expect(200)
-			.expect("Book changed");
-	});
-	
 	it("GET /books?author=Melvin", () => {
+		BookShelf.filterBooks.mockReturnValueOnce([mockData[0]]);
 		return request(app)
-		.get("/books")
-		.query({author: "Melvin"})
-		.expect(200)
-		.expect([{ id: 1, title: "Intro to React", author: "Melvin" }])
-	})
-	
+			.get("/books")
+			.query({ author: "Melvin" })
+			.expect(200)
+			.expect([{ id: 1, title: "Intro to React", author: "Melvin" }]);
+	});
+
 	it("GET /books?title=Weather", () => {
+		BookShelf.filterBooks.mockReturnValueOnce([mockData[3]]);
 		return request(app)
-		.get("/books")
-		.query({title: 'Weather'})
+			.get("/books")
+			.query({ title: "Weather" })
+			.expect(200)
+			.expect([{ id: 4, title: "Weather forecast", author: "Carl" }]);
+	});
+
+	it("GET /books?author=Syafi&title=Weather", () => {
+		BookShelf.filterBooks.mockReturnValueOnce([]);
+		return request(app)
+			.get("/books")
+			.query({ author: "Syafi", title: "Weather" })
+			.expect(200)
+			.expect([]);
+	});
+	it("GET /books?author=Carl&title=Weather", () => {
+		BookShelf.filterBooks.mockReturnValueOnce([
+			{ id: 4, title: "Weather forecast", author: "Carl" }
+		]);
+		return request(app)
+			.get("/books")
+			.query({ author: "Carl", title: "Weather" })
+			.expect(200)
+			.expect([{ id: 4, title: "Weather forecast", author: "Carl" }]);
+	});
+
+	it("PUT / should update book according to id", () => {
+		BookShelf.getBookById.mockReturnValueOnce({
+			id: 1,
+			title: "React developing in 5 easy steps",
+			author: "Melvin"
+		});
+		const changes = {
+			id: 1,
+			title: "React developing in 5 easy steps",
+			author: "Melvin"
+		};
+		return request(app)
+			.put("/books/1")
+			.send(changes)
+			.expect(200)
+			.expect({
+				id: 1,
+				title: "React developing in 5 easy steps",
+				author: "Melvin"
+			});
+	});
+
+	it("DELETE/ should delete book according to id stated", () => {
+		BookShelf.getAllBooks.mockReturnValueOnce([
+			{ id: 2, title: "Baking and debugging", author: "Yun" },
+			{ id: 3, title: "Being an awesome dev", author: "Syafi" },
+			{ id: 4, title: "Weather forecast", author: "Carl" }
+		]);
+		const id = "1";
+		return request(app)
+		.delete("/books/1")
+		.send(id)
 		.expect(200)
-		.expect([{ id: 4, title: "Weather forecast", author: "Carl" }])
+		.expect([
+			{ id: 2, title: "Baking and debugging", author: "Yun" },
+			{ id: 3, title: "Being an awesome dev", author: "Syafi" },
+			{ id: 4, title: "Weather forecast", author: "Carl" }
+		])
 	})
-	
 
 });
