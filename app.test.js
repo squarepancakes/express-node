@@ -7,6 +7,6 @@ describe("express server", () => {
 		return request(app)
 			.get("/")
 			.expect(200)
-			.expect("Apple pie!");
+			.expect("The Bookshelf!");
 	});
 });

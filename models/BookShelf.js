@@ -27,13 +27,17 @@ class BookShelf {
 		const keys = Object.keys(queries);
 		return this.books.filter(book => {
 			return keys.every(key => {
-				return book[key].includes(queries[key]);
+				const regex = new RegExp(queries[key], "gi");
+				return book[key].match(regex);
 			});
 		});
 	}
 
 	updateBook(id, changes) {
 		let bookToUpdate = this.getBookById(id);
+		if (!bookToUpdate) {
+			throw new Error("Book does not exist");
+		}
 		const indexOfBook = this.books.indexOf(bookToUpdate);
 		this.books.splice(indexOfBook, 1, changes);
 		bookToUpdate = this.books[indexOfBook];
@@ -41,9 +45,12 @@ class BookShelf {
 	}
 
 	deleteBook(id) {
-		let bookToDelete = this.getBookById(id);
+		const bookToDelete = this.getBookById(id);
+		if (!bookToDelete) {
+			throw new Error("Book does not exist");
+		}
 		const indexOfBook = this.books.indexOf(bookToDelete);
-		this.books.splice(indexOfBook, 1)
+		this.books.splice(indexOfBook, 1);
 		return this.getAllBooks();
 	}
 }

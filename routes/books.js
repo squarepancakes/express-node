@@ -25,16 +25,21 @@ router.post("/new", (req, res) => {
 });
 
 router.put("/:id", (req, res) => {
-	const changes = req.body;
-	const id = Number(req.params.id);
-	BookShelf.updateBook(id, changes);
-	res.send(BookShelf.getBookById(id));
+	try {
+		const changes = req.body;
+		const id = Number(req.params.id);
+		BookShelf.updateBook(id, changes);
+		res.send(changes);
+	} catch (error) {
+		res.status(404).send(error.message);
+	}
 });
 
 router.delete("/:id", (req, res) => {
 	const id = Number(req.params.id);
 	BookShelf.deleteBook(id);
 	res.send(BookShelf.getAllBooks());
-})
+});
+
 
 module.exports = router;

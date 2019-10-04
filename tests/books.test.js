@@ -12,7 +12,10 @@ const mockData = [
 ];
 
 describe("/books", () => {
-	it("GET / should return new books", () => {
+	beforeEach(() => {
+		jest.resetAllMocks();
+	});
+	it("GET / should return all books", () => {
 		BookShelf.getAllBooks.mockReturnValueOnce(mockData);
 		return request(app)
 			.get("/books")
@@ -65,8 +68,8 @@ describe("/books", () => {
 			.post("/books/new")
 			.send(newBook)
 			.expect(200)
-			.expect({ id: 11, title: "Pancakes", author: "Blah" });
-		// .expect(() => expect(BookShelf.addNewBook).toBeCalledTimes(1));
+			.expect({ id: 11, title: "Pancakes", author: "Blah" })
+			.expect(() => expect(BookShelf.addNewBook).toBeCalledTimes(1));
 	});
 
 	it("GET /books?author=Melvin", () => {
@@ -106,26 +109,34 @@ describe("/books", () => {
 			.expect([{ id: 4, title: "Weather forecast", author: "Carl" }]);
 	});
 
-	it("PUT / should update book according to id", () => {
-		BookShelf.getBookById.mockReturnValueOnce({
-			id: 1,
-			title: "React developing in 5 easy steps",
-			author: "Melvin"
+	it("PUT / should throw an error if book does not exist", () => {
+		BookShelf.updateBook.mockImplementationOnce(() => {
+			throw new Error();
 		});
-		const changes = {
+		return request(app)
+			.put("/books/100")
+			.expect(404);
+	});
+
+	it("PUT / should update book according to id", () => {
+		BookShelf.updateBook.mockReturnValueOnce();
+
+		const updates = {
 			id: 1,
 			title: "React developing in 5 easy steps",
 			author: "Melvin"
 		};
+
 		return request(app)
 			.put("/books/1")
-			.send(changes)
+			.send(updates)
 			.expect(200)
 			.expect({
 				id: 1,
 				title: "React developing in 5 easy steps",
 				author: "Melvin"
-			});
+			})
+			.expect(() => expect(BookShelf.updateBook).toBeCalledTimes(1));
 	});
 
 	it("DELETE/ should delete book according to id stated", () => {
@@ -134,16 +145,14 @@ describe("/books", () => {
 			{ id: 3, title: "Being an awesome dev", author: "Syafi" },
 			{ id: 4, title: "Weather forecast", author: "Carl" }
 		]);
-		const id = "1";
 		return request(app)
-		.delete("/books/1")
-		.send(id)
-		.expect(200)
-		.expect([
-			{ id: 2, title: "Baking and debugging", author: "Yun" },
-			{ id: 3, title: "Being an awesome dev", author: "Syafi" },
-			{ id: 4, title: "Weather forecast", author: "Carl" }
-		])
-	})
-
+			.delete("/books/1")
+			.expect(200)
+			.expect([
+				{ id: 2, title: "Baking and debugging", author: "Yun" },
+				{ id: 3, title: "Being an awesome dev", author: "Syafi" },
+				{ id: 4, title: "Weather forecast", author: "Carl" }
+			])
+			.expect(() => expect(BookShelf.deleteBook).toBeCalledTimes(1));
+	});
 });

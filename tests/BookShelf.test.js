@@ -57,6 +57,12 @@ describe("BookShelf", () => {
 					{ id: 2, title: "Baking and debugging", author: "Yun" }
 				]);
 			});
+
+			it("should be able to filter by author regardless of case sensitivity", () => {
+				expect(BookShelf.filterBooks({ author: "yun" })).toEqual([
+					{ id: 2, title: "Baking and debugging", author: "Yun" }
+				]);
+			});
 			it("should be able to filter and return all books written by author", () => {
 				expect(BookShelf.filterBooks({ author: "Syafi" })).toEqual([
 					{ id: 3, title: "Being an awesome dev", author: "Syafi" },
@@ -86,6 +92,7 @@ describe("BookShelf", () => {
 		});
 
 		describe("should be able to update books", () => {
+			
 			it("should be able to update a book when there are changes", () => {
 				BookShelf.books = [
 					{ id: 1, title: "Intro to React", author: "Melvin" },
