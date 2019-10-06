@@ -18,6 +18,7 @@ router.get("/:id", (req, res) => {
 	const oneBook = BookShelf.getBookById(id);
 	res.send(oneBook);
 });
+
 router.post("/new", (req, res) => {
 	const newBook = req.body;
 	BookShelf.addNewBook(newBook);

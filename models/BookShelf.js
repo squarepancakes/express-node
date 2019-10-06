@@ -1,12 +1,13 @@
 class BookShelf {
 	constructor() {
 		this.books = [
-			{ id: 1, title: "Intro to React", author: "Melvin" },
-			{ id: 2, title: "Baking and debugging", author: "Yun" },
-			{ id: 3, title: "Being an awesome dev", author: "Syafi" },
-			{ id: 4, title: "Weather forecast", author: "Carl" },
-			{ id: 5, title: "Dev in Japan", author: "Ashley" },
-			{ id: 6, title: "Gambling secrets", author: "Lishan" }
+			{ id: 1, title: "Intro to React", author: "Melvin", authorId: 1 },
+			{ id: 2, title: "Baking and debugging", author: "Yun", authorId: 2 },
+			{ id: 3, title: "Being an awesome dev", author: "Syafi", authorId: 3 },
+			{ id: 4, title: "Weather forecast", author: "Carl", authorId: 4 },
+			{ id: 5, title: "Dev in Japan", author: "Ashley", authorId: 5 },
+			{ id: 6, title: "Gambling secrets", author: "Lishan", authorId: 6 },
+			{ id: 7, title: "Poker tips and tricks", author: "Lishan", authorId: 6 }
 		];
 	}
 
@@ -52,6 +53,10 @@ class BookShelf {
 		const indexOfBook = this.books.indexOf(bookToDelete);
 		this.books.splice(indexOfBook, 1);
 		return this.getAllBooks();
+	}
+
+	getAllBooksByAuthor(id) {
+		return this.books.filter(book => book.authorId === id);
 	}
 }
 

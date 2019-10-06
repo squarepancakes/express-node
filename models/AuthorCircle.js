@@ -15,8 +15,7 @@ class AuthorCircle {
     }
     
     getAuthorById(id) {
-        return id
-    }
+		return this.authors.find(author => author.authorId === id)}
 }
 
 module.exports = new AuthorCircle();

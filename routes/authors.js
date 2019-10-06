@@ -1,16 +1,24 @@
 const express = require("express");
-const newRouter = express.Router();
+const router = express.Router();
 const AuthorCircle = require("../models/AuthorCircle");
+const BookShelf = require("../models/BookShelf");
 
-newRouter.post("/", (req, res) => res.send("Author added!"));
+router.post("/", (req, res) => res.send("Author added!"));
 
-newRouter.get("/", (req, res) => {
+router.get("/", (req, res) => {
 	return res.send(AuthorCircle.getAllAuthors());
 });
 
-newRouter.get("/:authorId", (req, res) => {
+router.get("/:authorId", (req, res) => {
 	const id = Number(req.params.authorId);
-	return res.send({ author: "Ashley", authorId: 5 });
+	const theAuthor = AuthorCircle.getAuthorById(id);
+	res.send(theAuthor);
 });
 
-module.exports = newRouter;
+router.get("/:authorId/books", (req, res) => {
+	const id = Number(req.params.authorId);
+	const booksByAuthor = BookShelf.getAllBooksByAuthor(id);
+	res.send(booksByAuthor);
+});
+
+module.exports = router;
