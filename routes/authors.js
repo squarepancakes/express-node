@@ -9,14 +9,14 @@ router.get("/", (req, res) => {
 	return res.send(AuthorCircle.getAllAuthors());
 });
 
-router.get("/:authorId", (req, res) => {
-	const id = Number(req.params.authorId);
+router.get("/:id", (req, res) => {
+	const id = Number(req.params.id);
 	const theAuthor = AuthorCircle.getAuthorById(id);
 	res.send(theAuthor);
 });
 
-router.get("/:authorId/books", (req, res) => {
-	const id = Number(req.params.authorId);
+router.get("/:id/books", (req, res) => {
+	const id = Number(req.params.id);
 	const booksByAuthor = BookShelf.getAllBooksByAuthor(id);
 	res.send(booksByAuthor);
 });

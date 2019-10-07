@@ -111,7 +111,7 @@ describe("/books", () => {
 
 	it("PUT / should throw an error if book does not exist", () => {
 		BookShelf.updateBook.mockImplementationOnce(() => {
-			throw new Error();
+			throw new Error("Book does not exist!");
 		});
 		return request(app)
 			.put("/books/100")

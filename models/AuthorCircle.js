@@ -1,12 +1,12 @@
 class AuthorCircle {
 	constructor() {
 		this.authors = [
-			{ author: "Melvin", authorId: 1 },
-			{ author: "Yun", authorId: 2 },
-			{ author: "Syafi", authorId: 3 },
-			{ author: "Carl", authorId: 4 },
-			{ author: "Ashley", authorId: 5 },
-			{ author: "Lishan", authorId: 6 }
+			{ author: "Melvin", id: 1 },
+			{ author: "Yun", id: 2 },
+			{ author: "Syafi", id: 3 },
+			{ author: "Carl", id: 4 },
+			{ author: "Ashley", id: 5 },
+			{ author: "Lishan", id: 6 }
 		];
 	}
 
@@ -15,7 +15,7 @@ class AuthorCircle {
     }
     
     getAuthorById(id) {
-		return this.authors.find(author => author.authorId === id)}
+		return this.authors.find(author => author.id === id)}
 }
 
 module.exports = new AuthorCircle();

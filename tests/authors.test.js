@@ -17,12 +17,12 @@ const mockBooksData = [
 ];
 
 const mockData = [
-	{ author: "Melvin", authorId: 1 },
-	{ author: "Yun", authorId: 2 },
-	{ author: "Syafi", authorId: 3 },
-	{ author: "Carl", authorId: 4 },
-	{ author: "Ashley", authorId: 5 },
-	{ author: "Lishan", authorId: 6 }
+	{ author: "Melvin", id: 1 },
+	{ author: "Yun", id: 2 },
+	{ author: "Syafi", id: 3 },
+	{ author: "Carl", id: 4 },
+	{ author: "Ashley", id: 5 },
+	{ author: "Lishan", id: 6 }
 ];
 
 describe("/authors", () => {
@@ -35,12 +35,12 @@ describe("/authors", () => {
 			.get("/authors")
 			.expect(200)
 			.expect([
-				{ author: "Melvin", authorId: 1 },
-				{ author: "Yun", authorId: 2 },
-				{ author: "Syafi", authorId: 3 },
-				{ author: "Carl", authorId: 4 },
-				{ author: "Ashley", authorId: 5 },
-				{ author: "Lishan", authorId: 6 }
+				{ author: "Melvin", id: 1 },
+				{ author: "Yun", id: 2 },
+				{ author: "Syafi", id: 3 },
+				{ author: "Carl", id: 4 },
+				{ author: "Ashley", id: 5 },
+				{ author: "Lishan", id: 6 }
 			]);
 	});
 
@@ -49,7 +49,7 @@ describe("/authors", () => {
 		return request(app)
 			.get("/authors/3")
 			.expect(200)
-			.expect({ author: "Syafi", authorId: 3 });
+			.expect({ author: "Syafi", id: 3 });
 	});
 
 	it("GET / should return author id 5", () => {
@@ -57,10 +57,11 @@ describe("/authors", () => {
 		return request(app)
 			.get("/authors/6")
 			.expect(200)
-			.expect({ author: "Lishan", authorId: 6 });
+			.expect({ author: "Lishan", id: 6 })
+			.expect(()=> expect(AuthorCircle.getAuthorById).toBeCalledTimes(1));
 	});
 
-	it("GET / should return all books by author with authorId 4", () => {
+	it("GET / should return all books by author with id 4", () => {
 		BookShelf.getAllBooksByAuthor.mockReturnValueOnce(mockBooksData[3]);
 		return request(app)
 			.get("/authors/4/books")

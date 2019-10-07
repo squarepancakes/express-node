@@ -25,14 +25,15 @@ router.post("/new", (req, res) => {
 	res.send(newBook);
 });
 
-router.put("/:id", (req, res) => {
+router.put("/:id", (req, res, next) => {
 	try {
 		const changes = req.body;
 		const id = Number(req.params.id);
 		BookShelf.updateBook(id, changes);
 		res.send(changes);
 	} catch (error) {
-		res.status(404).send(error.message);
+		error.status = 404;
+		next(error);
 	}
 });
 
